@@ -6,8 +6,13 @@
 ```
 ## Uplink 
 Inputs: 
+Sensors: - Sound source Beeper
+         - Switches
+         - OLED Display
+         - RFID Reader
+         - Touch Switch
 
-Processor:
+Processor: 
 
 Network:
 ```
@@ -28,3 +33,10 @@ Output:
 
 Processor:
 ```
+
+
+
+## Reference
+* *
+* *
+* *

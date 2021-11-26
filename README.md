@@ -6,22 +6,38 @@
 ```
 ## Uplink 
 Inputs: 
-Sensors: - Sound source Beeper
-         - Switches
-         - OLED Display
-         - RFID Reader
-         - Touch Switch
+Sensors: - Sound source Beeper (Buzzer Digital Output)
+         - Switches (Dual tact switcher)
+         - OLED Display (SSD1306)
+         - RFID Reader (MFRC522)
+         - Touch Switch (TIP223)
 
-Processor: 
+Processor: Locker and Smart Watch with RFID Tag  
 
-Network:
+Network: - Protocal:
+         - Architecture:
+         - Topology:
 ```
 
 ```
 ## Processing
-Data:
+Data: - Source: from sensors in the locker
+      - Time: Real Time
+      - Storage: SQLserver ( In-out record, Locker status) 
+      - Privacy: Anonymous users
+      
+Information: 
+Procedure:
+Repea
+>step1: Open the locker with 
+>step2:
+>step3:
+>step4:
+>step5:
 
-Information:
+
+
+
 ```
 
 ```

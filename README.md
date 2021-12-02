@@ -17,11 +17,11 @@ Sensors: - ^Sound source Beeper (Buzzer Digital Output)
          - Touch Switch (TIP223)
          
 Components: - Arduino 
-            - E
+            - ESP8266
 
 Processor: Locker and Smart Watch with RFID Tag  
 
-Network: - Protocal: 
+Network: - Protocal: WiFi (ESP8266)
          - Architecture:
          - Topology:
 ```

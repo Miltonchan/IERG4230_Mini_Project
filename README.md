@@ -1,10 +1,11 @@
 # IERG4230_Mini_Project - Smart Mailbox 
 
-> ### *Target Users: Postman, Mailbox Users
-> ### *Target Place: public and pirvate housing estate, Hong Kong Post
-> ### *Purpose: Improve efficiency of mailing procdure
-> ### *         Reduce mail checking time, Improve user experience
-> ### *         Reduce the risk of mails being stolen
+> ### Target Users: Postman, Mailbox Users
+> ### Target Place: public and pirvate housing estate, Hong Kong Post
+> ### ***Purpose:
+> ### 1.Improve efficiency of mailing procdure
+> ### 2.Reduce mail checking time, Improve user experience
+> ### 3.Reduce the risk of mails being stolen
 
 ```
 ## Uplink 

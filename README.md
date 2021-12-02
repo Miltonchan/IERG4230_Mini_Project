@@ -1,8 +1,11 @@
-# IERG4230_Mini_Project - Anti-theft Smart Locker
+# IERG4230_Mini_Project - Smart Mailbox 
 
-> ### *Target Users: Locker Users*
+> ### *Target Users: Postman, Mailbox Users*
+> ### *Target Place: public and pirvate housing estate, Hong Kong Post*
+> ### *Purpose: Improve efficiency of mailing procdure
+>               Reduce mail checking time, Improve user experience
+>               Reduce the risk of mails being stolen*
 
-> ### *Target Place: Public Area e.g. Beach, Swimming Pool, Stadium, Railway Station*
 ```
 ## Uplink 
 Inputs: 
@@ -28,8 +31,10 @@ Data: - Source: from sensors in the locker
       
 Information: 
 Procedure:
-Repea
->step1: Open the locker with 
+Repeat
+
+
+>step1: 
 >step2:
 >step3:
 >step4:

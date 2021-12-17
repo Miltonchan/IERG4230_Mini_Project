@@ -22,7 +22,7 @@
   nRESET       Not connected
   VIN(+5)      VIN
 */
-#include <Wire.h>
+#include <Wire.h> 
 #include "MFRC522_I2C.h"
 
 #include <Adafruit_GFX.h>     //OLED
@@ -30,6 +30,10 @@
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
+
+
+
+int mailnum = 0;
 
 // OLED
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
@@ -70,11 +74,14 @@ void setup() {
   display.setTextColor(WHITE);
   display.setCursor(0, 10);
   // Display static text
-  display.println("IERG 4230 IoT MFRC522");
+  display.println("Smart MailBox");
+  display.println("ID:18H");
   display.display();
+  char fd[]={};
 }
 
 void loop() {
+
   // Look for new cards, and select one if present
   if (! mfrc522.PICC_IsNewCardPresent() || ! mfrc522.PICC_ReadCardSerial() )
   {
@@ -86,26 +93,31 @@ void loop() {
   // Now a card is selected. The UID and SAK is in mfrc522.uid.
   display.setCursor(0, 10);
   // Display static text
-  display.println("IERG 4230 IoT MFRC522");
+  display.println("Smart MailBox");
+  display.println("ID:18H");
+  ShowMailNum();
   display.display();
-
+/*
   // Dump UID
   Serial.println();
-  Serial.print(F("Card UID Length: "));
+  Serial.print(F("Stamp RFID Length: "));
   Serial.println(mfrc522.uid.size, HEX);
   //OLED 3rd line
   display.setCursor(0, 30);
-  display.print("Card UID Length: ");
+  display.print("Stamp RFID Length: ");
   display.println(mfrc522.uid.size, HEX);
   display.display();
+*/
 
-  Serial.print(F("Card UID:"));
+  Serial.print(F("Stamp ID:"));
   //OLED 5rd line
-  display.setCursor(0, 50);
-  display.print("Card UID: ");
+  //display.setCursor(0, 30);
+  display.print("Stamp ID:");
 
-  display.display();
-  display.setCursor(55, 50);
+ // display.display();
+ //display.setCursor(55, 50);
+  
+    
   for (byte i = 0; i < mfrc522.uid.size; i++)
   {
     Serial.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");
@@ -123,7 +135,6 @@ void loop() {
     display.print(mfrc522.uid.uidByte[i], HEX);
     display.display();
   }
-  Serial.println();
   ESP.wdtFeed();
 }
 
@@ -146,3 +157,13 @@ void ShowReaderDetails() {
     Serial.println(F("WARNING: Communication failure, is the MFRC522 properly connected?"));
   }
 }
+
+void ShowMailNum(){
+  mailnum = mailnum + 1;
+  Serial.println();
+  Serial.print("Total number of letter(s):");
+  Serial.println(mailnum);
+  display.println();
+  display.print("Total number of letter(s):");
+  display.println(mailnum);
+  }

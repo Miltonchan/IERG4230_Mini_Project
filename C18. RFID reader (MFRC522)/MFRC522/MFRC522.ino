@@ -24,6 +24,8 @@
 */
 #include <Wire.h> 
 #include "MFRC522_I2C.h"
+#include <ESP8266WiFi.h>;
+#include <ESP8266WebServer.h>;
 
 #include <Adafruit_GFX.h>     //OLED
 #include <Adafruit_SSD1306.h> //OLED
@@ -46,7 +48,19 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 //MFRC522 mfrc522(0x3F, RST_PIN);   // Create MFRC522 instance.
 MFRC522 mfrc522(0x28, RST_PIN);   // Create MFRC522 instance.
 
+//new//
+  char *ssid_ap = "IERG4230test";
+  char *password_ap = "nm8mujq64ig8q";
+  IPAddress ip(192,168,11,4);
+  IPAddress gateway(192,168,11,1);
+  IPAddress subnet(255,255,255,0);
+  ESP8266WebServer server;
+
 void setup() {
+   //new//
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid_ap, password_ap);
+   
   ESP.wdtDisable();
   ESP.wdtFeed();
 
@@ -108,7 +122,16 @@ void loop() {
   display.println(mfrc522.uid.size, HEX);
   display.display();
 */
-
+  
+  String str[]={};
+  String id = "";
+  for (byte i = 0; i < mfrc522.uid.size; i++){
+    id += String(mfrc522.uid.uidByte[i]);
+    }
+  
+  str[mailnum] = id;
+  Serial.println(str[mailnum]);
+   
   Serial.print(F("Stamp ID:"));
   //OLED 5rd line
   //display.setCursor(0, 30);

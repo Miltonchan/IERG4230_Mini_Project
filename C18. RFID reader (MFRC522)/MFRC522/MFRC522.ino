@@ -25,8 +25,9 @@
 #include <Wire.h> 
 #include "MFRC522_I2C.h"
 #include <ESP8266WiFi.h>;
+#include <WiFiClient.h>
 #include <ESP8266WebServer.h>;
-
+#include <ESP8266mDNS.h>
 #include <Adafruit_GFX.h>     //OLED
 #include <Adafruit_SSD1306.h> //OLED
 
@@ -35,7 +36,14 @@
 
 
 
+
 int mailnum = 0;
+String str[]={"","","","","","","","","","",""};
+boolean duplicate =false; 
+
+
+
+
 
 // OLED
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
@@ -48,21 +56,38 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 //MFRC522 mfrc522(0x3F, RST_PIN);   // Create MFRC522 instance.
 MFRC522 mfrc522(0x28, RST_PIN);   // Create MFRC522 instance.
 
-//new//
-  char *ssid_ap = "IERG4230test";
-  char *password_ap = "nm8mujq64ig8q";
-  IPAddress ip(192,168,11,4);
-  IPAddress gateway(192,168,11,1);
-  IPAddress subnet(255,255,255,0);
-  ESP8266WebServer server;
 
+//new//
+  char *ssid_ap = "IERG123";
+  char *password_ap = "12345678";
+  
+  IPAddress ip(192,168,1,1);
+  IPAddress gateway(192,168,1,1);
+  IPAddress subnet(255,255,255,0);
+  ESP8266WebServer server(80);
+
+
+  
 void setup() {
    //new//
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid_ap, password_ap);
-   
+  delay(100);
+  //server.begin();
+   while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("");
+  Serial.print("Connected to ");
+  Serial.println(ssid_ap);
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
+
+  
   ESP.wdtDisable();
   ESP.wdtFeed();
+
 
   Serial.begin(115200);           // Initialize serial communications with the PC
   Serial.println("ESP8266-12E/F MFRC5522 RFID test program\n");
@@ -92,6 +117,8 @@ void setup() {
   display.println("ID:18H");
   display.display();
   char fd[]={};
+
+
 }
 
 void loop() {
@@ -108,8 +135,7 @@ void loop() {
   display.setCursor(0, 10);
   // Display static text
   display.println("Smart MailBox");
-  display.println("ID:18H");
-  ShowMailNum();
+  display.println("Room:18H");
   display.display();
 /*
   // Dump UID
@@ -122,16 +148,11 @@ void loop() {
   display.println(mfrc522.uid.size, HEX);
   display.display();
 */
+
+ 
+
+
   
-  String str[]={};
-  String id = "";
-  for (byte i = 0; i < mfrc522.uid.size; i++){
-    id += String(mfrc522.uid.uidByte[i]);
-    }
-  
-  str[mailnum] = id;
-  Serial.println(str[mailnum]);
-   
   Serial.print(F("Stamp ID:"));
   //OLED 5rd line
   //display.setCursor(0, 30);
@@ -159,10 +180,45 @@ void loop() {
     display.display();
   }
   ESP.wdtFeed();
+  
+  //new//
+  duplicate = false;
+  String id = "";
+  for (byte i = 0; i < mfrc522.uid.size; i++){
+    id += String(mfrc522.uid.uidByte[i]);
+    }
+
+
+  for(int k =0; k<= mailnum;k++){
+  if (id == str[k]){ 
+    duplicate = true;
+    }
+  }
+  
+  if(!duplicate){
+    str[mailnum] = id;
+    mailnum++;
+    }
+     
+     
+  for(int j = 0; j<= mailnum;j++){
+       if(str[j] != ""){
+       Serial.println(str[j]);}
+     } 
+     
+
+  Serial.println();
+  Serial.print("number of letter(s):");
+  Serial.println(mailnum);
+  display.println();
+  display.print("number of letter(s):");
+  display.println(mailnum);
+  delay(1000);
+  
 }
 
 void ShowReaderDetails() {
-  // Get the MFRC522 software version
+  // Get the MFRC522 software version 
   ESP.wdtFeed();
   Serial.println("");
   byte v = mfrc522.PCD_ReadRegister(mfrc522.VersionReg);
@@ -180,13 +236,3 @@ void ShowReaderDetails() {
     Serial.println(F("WARNING: Communication failure, is the MFRC522 properly connected?"));
   }
 }
-
-void ShowMailNum(){
-  mailnum = mailnum + 1;
-  Serial.println();
-  Serial.print("Total number of letter(s):");
-  Serial.println(mailnum);
-  display.println();
-  display.print("Total number of letter(s):");
-  display.println(mailnum);
-  }

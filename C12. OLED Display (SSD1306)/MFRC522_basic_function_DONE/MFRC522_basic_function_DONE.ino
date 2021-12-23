@@ -1,4 +1,4 @@
-/*
+ /*
    IERG4230 IoT Testing Program
    MFRC522 RFID
    Matter Needing attention:
@@ -56,11 +56,13 @@ String html_1 = R"=====(
 
 
 #include "MFRC522_I2C.h"
+#include <NTPClient.h>;
+#include <WiFiUdp.h>;
 #include <ESP8266WiFi.h>;
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>;
 #include <ESP8266mDNS.h>
-#include <Wire.h> 
+#include <Wire.h>;
 #include "IERG4230_ESP8266.h" //website
 #include <Adafruit_GFX.h>     //OLED
 #include <Adafruit_SSD1306.h> //OLED
@@ -96,9 +98,23 @@ String html_1 = R"=====(
 
 int mailnum = 0;
 String str[]={"","","","","","","","","","",""};
+String datetime[]={"","","","","","","","","","",""};
 boolean duplicate =false; 
+#define cardno = "43489250116106128";
+int cardaccess = 1;
+int accessnum = 0;
+String cardaccesstime[]= {"","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",};
 
 
+// Define NTP Client to get time
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP,"pool.ntp.org");
+
+//Week Days
+String weekDays[7]={"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+
+//Month names
+String months[12]={"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 
 
 
@@ -132,10 +148,13 @@ unsigned long currentTime = millis();
 unsigned long previousTime = 0; 
 // Define timeout time in milliseconds (example: 2000ms = 2s)
 const long timeoutTime = 2000;
+
 //*******************************************
 
   
 void setup() {
+
+  
    //new//
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid_ap, password_ap);
@@ -170,11 +189,12 @@ void setup() {
   ///OLED diplay 1st line
   display.setTextSize(1);
   display.setTextColor(WHITE);
-  display.setCursor(0, 10);
+  display.setCursor(0, 0);
   
   // Display static text
   display.println("Smart MailBox");
-  display.println("ID:18H");
+  display.println("Room:18H");
+  display.println("Status:Closed");
   display.display();
   char fd[]={};
 
@@ -193,6 +213,17 @@ void setup() {
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
   server.begin();
+
+
+// Initialize a NTPClient to get time
+  timeClient.begin();
+  // Set offset time in seconds to adjust for your timezone, for example:
+  // GMT +1 = 3600
+   // GMT +8 = 28800;
+  // GMT -1 = -3600
+  // GMT 0 = 0
+  timeClient.setTimeOffset(28800);
+  
 }
 
 void loop() {
@@ -206,11 +237,12 @@ void loop() {
   }
   display.clearDisplay();
   // Now a card is selected. The UID and SAK is in mfrc522.uid.
-  display.setCursor(0, 10);
+  display.setCursor(0, 0);
   // Display static text
   display.println("Smart MailBox");
   display.println("Room:18H");
   display.display();
+
 /*
   // Dump UID
   Serial.println();
@@ -265,30 +297,100 @@ void loop() {
 
 
   for(int k =0; k<= mailnum;k++){
-  if (id == str[k]){ 
+  if (id == str[k] ){ 
     duplicate = true;
     }
   }
+
+  timeClient.update();
+  unsigned long epochTime = timeClient.getEpochTime();
+ // Serial.print("Epoch Time: ");
+ // Serial.println(epochTime);
+  
+  String formattedTime = timeClient.getFormattedTime();
+ // Serial.print("Formatted Time: ");
+ // Serial.println(formattedTime);  
+
+  int currentHour = timeClient.getHours();
+  //Serial.print("Hour: ");
+  //Serial.println(currentHour);  
+
+  int currentMinute = timeClient.getMinutes();
+  //Serial.print("Minutes: ");
+  //Serial.println(currentMinute); 
+
+  int currentSecond = timeClient.getSeconds();
+  //Serial.print("Seconds: ");
+  //Serial.println(currentSecond);  
+
+  String weekDay = weekDays[timeClient.getDay()];
+  //Serial.print("Week Day: ");
+  //Serial.println(weekDay);    
+
+  //Get a time structure
+  struct tm *ptm = gmtime ((time_t *)&epochTime); 
+
+  int monthDay = ptm->tm_mday;
+  //Serial.print("Month day: ");
+  //Serial.println(monthDay);
+
+  int currentMonth = ptm->tm_mon+1;
+  //Serial.print("Month: ");
+  //Serial.println(currentMonth);
+
+  String currentMonthName = months[currentMonth-1];
+  //Serial.print("Month name: ");
+  //Serial.println(currentMonthName);
+
+  int currentYear = ptm->tm_year+1900;
+  //Serial.print("Year: ");
+  //Serial.println(currentYear);
+
+  //Print complete date:
+  String currentDate = String(currentYear) + "-" + String(currentMonth) + "-" + String(monthDay)+"  "+ String(weekDay)+"  "+String(currentHour)+":"+String(currentMinute)+":"+String(currentSecond);
+  //Serial.print("Current date: ");
+  //Serial.println(currentDate);
+
   
   if(!duplicate){
-    str[mailnum] = id;
-    mailnum++;
+    if(id != "43489250116106128"){
+       str[mailnum] = id;
+       datetime[mailnum] = currentDate;
+       mailnum++;}
     }
-     
+   
+   if(id == "43489250116106128"){
+        cardaccesstime[accessnum] = currentDate;
+        accessnum++;
+        cardaccess = cardaccess+1 ;
+      }
+      
+    
+
+  
+  
+  if(id == "43489250116106128"){
+  display.clearDisplay();
+  // Now a card is selected. The UID and SAK is in mfrc522.uid.
+  display.setCursor(0, 0);
+  // Display static text
+  display.println("Smart MailBox");
+  display.println("Room:18H");
+  if(cardaccess%2 == 1){ display.println("Status:Closed");} else {display.println("Status:Opened");}
+  display.display();}
+
      
   for(int j = 0; j<= mailnum;j++){
        if(str[j] != ""){
        Serial.println(str[j]);}
      } 
-     
 
   Serial.println();
   Serial.print("number of letter(s):");
   Serial.println(mailnum);
-  display.println();
   display.print("number of letter(s):");
   display.println(mailnum);
-  delay(1000);
+  delay(100);
 
 //inside the loop for webserver*******************************************************************************************
   WiFiClient client = server.available();   // Listen for incoming clients
@@ -319,13 +421,13 @@ void loop() {
             //x=x+1; //page upload counter
             client.println("<HTML>");
             client.print("<HEAD>");
-            client.print("<meta http-equiv=\"refresh\" content=\"2\">");
+            client.print("<meta http-equiv=\"refresh\" content=\"0.2\">");
             client.print("<TITLE />Smart Mailbox ROOM 18H TEST</title>");
             client.print("</head>");
             client.println("<BODY>");
             //client.print("Zoomkat's meta-refresh test IDE 1.0");
             client.println(" ");
-
+          
             // Display the HTML web page
             client.println("<!DOCTYPE html><html>");
             client.println("<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
@@ -336,20 +438,37 @@ void loop() {
             client.println(".button { background-color: #195B6A; border: none; color: white; padding: 16px 40px;");
             client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
             client.println(".button2 {background-color: #77878A;}</style></head>");
-            
+         
             // Web Page Heading
+            client.println("<style> table, th, td { border:1px solid black;}</style>");
             client.println("<body><h1>Smart mailbox</h1>");
-            client.println("<body><h1>ESP8266 Web Server</h1>");
-            client.println("<body><h1>CARD no.</h1>");
+            client.println("<h2>Address: Wah Fu (II) Estate Block A Room 18H </h2>");
+            client.print("<h1>Total number of mail:");
+            client.print(mailnum);
+            client.print("</h1>");
+            client.println("<h2>CARD no:43489250116106128</h2>");
+            client.println("<table style=\"width:100%\">");
+            client.println("<tr><td>Received Mail Time</td><td>Mail</td><td>Mail Tag No.</td></tr>");
+                         
               for(int j = 0; j<= mailnum;j++){
                 if(str[j] != ""){
-                  client.print("[");
+                  client.print("<tr>");
+                  client.print("<td>");
+                  client.print(datetime[j]);
+                  client.print("</td>");
+                  client.print("<td>[");
                   client.print(j+1);
-                  client.print("]");
-                  client.print(" : ");
-                  client.println(str[j]);
+                  client.print("]</td>");
+                  client.print("<td>");
+                  client.print(str[j]);
+                  client.print("</td>");
+                  client.print("</tr>");
                 }
               }
+              client.print("</table>");
+              client.print("</body>");
+
+
              
             // The HTTP response ends with another blank line
             //client.println();

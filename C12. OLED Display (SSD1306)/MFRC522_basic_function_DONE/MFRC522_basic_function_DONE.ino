@@ -108,7 +108,7 @@ String cardaccesstime[]= {"","","","","","","","","","","","","","","","","","",
 
 // Define NTP Client to get time
 WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP,"pool.ntp.org");
+NTPClient timeClient(ntpUDP,"hk.pool.ntp.org");
 
 //Week Days
 String weekDays[7]={"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
@@ -192,6 +192,7 @@ void setup() {
   display.setCursor(0, 0);
   
   // Display static text
+  
   display.println("Smart MailBox");
   display.println("Room:18H");
   display.println("Status:Closed");
@@ -330,11 +331,13 @@ void loop() {
   //Get a time structure
   struct tm *ptm = gmtime ((time_t *)&epochTime); 
 
-  int monthDay = ptm->tm_mday;
+  //int monthDay = ptm->tm_mday;
+  int monthDay = 24;
   //Serial.print("Month day: ");
   //Serial.println(monthDay);
 
-  int currentMonth = ptm->tm_mon+1;
+  //int currentMonth = ptm->tm_mon+1;
+  int currentMonth = 12;
   //Serial.print("Month: ");
   //Serial.println(currentMonth);
 
@@ -342,7 +345,8 @@ void loop() {
   //Serial.print("Month name: ");
   //Serial.println(currentMonthName);
 
-  int currentYear = ptm->tm_year+1900;
+  //int currentYear = ptm->tm_year+1900;
+  int currentYear = 2021;
   //Serial.print("Year: ");
   //Serial.println(currentYear);
 
@@ -424,8 +428,9 @@ void loop() {
             client.print("<meta http-equiv=\"refresh\" content=\"0.2\">");
             client.print("<TITLE />Smart Mailbox ROOM 18H TEST</title>");
             client.print("</head>");
+            
             client.println("<BODY>");
-            //client.print("Zoomkat's meta-refresh test IDE 1.0");
+            
             client.println(" ");
           
             // Display the HTML web page
@@ -441,24 +446,29 @@ void loop() {
          
             // Web Page Heading
             client.println("<style> table, th, td { border:1px solid black;}</style>");
-            client.println("<body><h1>Smart mailbox</h1>");
+            client.println("<body><h1>Welcome To The Smart Mailbox System </h1>");
+            client.println("<img src=\"https://mapio.net/images-p/120706979.jpg\"  style=\"width:200px;height:150px;\">");
             client.println("<h2>Address: Wah Fu (II) Estate Block A Room 18H </h2>");
             client.print("<h1>Total number of mail:");
             client.print(mailnum);
             client.print("</h1>");
-            client.println("<h2>CARD no:43489250116106128</h2>");
+            client.println("<h2>CARD no:43489250116106128");
+            if(cardaccess%2 == 1){ client.println("Status:Closed</h2>");} else { client.println("       Status:Opened</h2>");}
+
+
+            client.println("<h1>Mail Record</h1>");
             client.println("<table style=\"width:100%\">");
-            client.println("<tr><td>Received Mail Time</td><td>Mail</td><td>Mail Tag No.</td></tr>");
+            client.println("<tr><td>Mail</td><td>Received Mail Time</td><td>Mail Tag No.</td></tr>");
                          
               for(int j = 0; j<= mailnum;j++){
                 if(str[j] != ""){
                   client.print("<tr>");
-                  client.print("<td>");
-                  client.print(datetime[j]);
-                  client.print("</td>");
                   client.print("<td>[");
                   client.print(j+1);
                   client.print("]</td>");
+                  client.print("<td>");
+                  client.print(datetime[j]);
+                  client.print("</td>");
                   client.print("<td>");
                   client.print(str[j]);
                   client.print("</td>");
@@ -466,6 +476,25 @@ void loop() {
                 }
               }
               client.print("</table>");
+            client.println();
+            client.println("<h1>Access Record</h1>");
+            client.println("<table style=\"width:100%\">");
+            client.println("<tr><td>No.</td><td>Card Access Time</td></tr>");
+                         
+              for(int j = 0; j<= accessnum;j++){
+                if(cardaccesstime[j] != ""){
+                  client.print("<tr>");
+                  client.print("<td>[");
+                  client.print(j+1);
+                  client.print("]</td>");
+                  client.print("<td>");
+                  client.print(cardaccesstime[j]);
+                  client.print("</td>");
+                  client.print("</tr>");
+                }
+              }
+              client.print("</table>");
+              
               client.print("</body>");
 
 

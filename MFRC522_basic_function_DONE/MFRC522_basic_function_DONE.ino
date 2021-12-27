@@ -331,13 +331,11 @@ void loop() {
   //Get a time structure
   struct tm *ptm = gmtime ((time_t *)&epochTime); 
 
-  //int monthDay = ptm->tm_mday;
-  int monthDay = 24;
+  int monthDay = ptm->tm_mday;
   //Serial.print("Month day: ");
   //Serial.println(monthDay);
 
-  //int currentMonth = ptm->tm_mon+1;
-  int currentMonth = 12;
+  int currentMonth = ptm->tm_mon+1;
   //Serial.print("Month: ");
   //Serial.println(currentMonth);
 
@@ -345,8 +343,7 @@ void loop() {
   //Serial.print("Month name: ");
   //Serial.println(currentMonthName);
 
-  //int currentYear = ptm->tm_year+1900;
-  int currentYear = 2021;
+  int currentYear = ptm->tm_year+1900;
   //Serial.print("Year: ");
   //Serial.println(currentYear);
 

@@ -1,5 +1,6 @@
 # IERG4230_Mini_Project - Smart Mailing System
-https://github.com/Miltonchan/IERG4230_Mini_Project/blob/main/mailbox_system.png
+<img width="400" alt="mailbox_system" src="https://user-images.githubusercontent.com/68136651/190033054-79bf4a6a-0d5f-4e47-a6ed-1517e7e97442.png">
+
 > ### Target Users: Postman, Hong Kong Citizens
 > ### Target Place: public and pirvate housing estate, Hong Kong Post
 > ### ***Purpose:

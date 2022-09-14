@@ -1,4 +1,4 @@
-# IERG4230_Mini_Project - Smart Mailbox 
+# IERG4230_Mini_Project - Smart Mailing System
 
 > ### Target Users: Postman, Hong Kong Citizens
 > ### Target Place: public and pirvate housing estate, Hong Kong Post
